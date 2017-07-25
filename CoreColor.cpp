@@ -4,6 +4,8 @@
 #include "CoreColor.h"
 //std
 #include <algorithm>
+#include <iomanip>
+#include <sstream>
 
 //Usings
 USING_NS_CORECOLOR;
@@ -161,6 +163,29 @@ void Color::toRGBA_InPlace()
     }
 
     //COWTODO: Implement other modes....
+}
+
+//Hex
+std::string Color::toHexRGBA(const std::string &prefix /* = "0x"*/)
+{
+    std::stringstream ss;
+    ss << std::hex 
+        << std::setw(6) 
+        << std::setfill('0')
+        << toPackedRGBA(); 
+
+    return ss.str();
+}
+
+std::string Color::toHexRGB(const std::string &prefix /* = "0x"*/)
+{
+    std::stringstream ss;
+    ss << std::hex 
+       << std::setw(6) 
+       << std::setfill('0')
+       << toPackedRGB(); 
+    
+    return ss.str();
 }
 
 

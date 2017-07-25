@@ -1,5 +1,7 @@
 //COWTODO: Add the license headers.
 #pragma once
+//std
+#include <string>
 
 #define NS_CORECOLOR_BEGIN namespace CoreColor {
 #define NS_CORECOLOR_END   }
@@ -58,6 +60,10 @@ public:
 
     Color toRGBA() const;
     void  toRGBA_InPlace();
+
+    //Hex
+    std::string toHexRGBA(const std::string &prefix = "0x");
+    std::string toHexRGB(const std::string &prefix = "0x");
 
     //HSV
     Color toHSV() const;
