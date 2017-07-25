@@ -121,6 +121,10 @@ Color::uint Color::toPackedRGBA() const
 
 Color::uint Color::toPackedRGB() const
 {
+    auto &color = (m_mode == Color::Mode::RGB) 
+        ? *this           //Refrence to itself.
+        : this->toRGBA(); //New converted color.
+
     //COWTODO: this function is nearly idendical to the RGBA one.
     //  check what can be refactored.
     constexpr auto kComponentsCount = (3 - 1); //RGB -1 to be Zero based.
@@ -128,7 +132,7 @@ Color::uint Color::toPackedRGB() const
     uint packed_value = 0;
     for(int i = kComponentsCount; i >= 0; --i)
     {
-        auto v = static_cast<uint>(m_data[i] * 255);
+        auto v = static_cast<uint>(color.m_data[i] * 255);
         packed_value +=  v << (8 * (kComponentsCount - i));
     }
     return packed_value;
