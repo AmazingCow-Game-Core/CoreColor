@@ -7,20 +7,21 @@
 #define NS_CORECOLOR_END   }
 #define USING_NS_CORECOLOR using namespace CoreColor
 
+
 NS_CORECOLOR_BEGIN
 // Color Class //
-union Color
+class Color
 {
     // Enums / Constants / Typedefs //
 public:
     typedef unsigned int uint;
-    enum class Mode { RGB, HSV };
+    enum class Mode { RGB = 10, HSV = 20};
 
 
     // Inner Types //
 public:
-    struct HSV { float h, s, v;    } hsv;
-    struct RGB { float r, g, b, a; } rgb;
+    struct HSV { float h, s, v, a; };
+    struct RGB { float r, g, b, a; };
 
 
     // Static Methods //
@@ -49,7 +50,7 @@ public:
     void setRGBA(float r, float g, float b, float a = 1.0f);
 
     //HSV
-    void setHSV(float h, float s, float v);
+    void setHSV(float h, float s, float v, float a = 1.0f);
 
 
     // To Methods //
@@ -73,7 +74,11 @@ public:
     // iVars //
 private:
     Mode  m_mode;
-    float m_data[4];
+    union {
+        float m_data[4];
+        HSV hsv;
+        RGB rgb;
+    };
 };
 
 

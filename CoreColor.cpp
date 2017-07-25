@@ -101,13 +101,14 @@ void Color::setRGBA(float r, float g, float b, float a /* = 1.0f */)
 }
 
 //HSV
-void Color::setHSV(float h, float s, float v)
+void Color::setHSV(float h, float s, float v, float a /* = 1.0f */)
 {
     m_mode = Color::Mode::HSV;
 
     hsv.h = h;
     hsv.s = s;
     hsv.v = v;
+    hsv.a = 1;
 }
 
 
@@ -123,7 +124,7 @@ Color::uint Color::toPackedRGBA() const
 
 Color::uint Color::toPackedRGB() const
 {
-    auto &color = (m_mode == Color::Mode::RGB) 
+    const auto &color = (m_mode == Color::Mode::RGB)
         ? *this           //Refrence to itself.
         : this->toRGBA(); //New converted color.
 
@@ -146,7 +147,7 @@ Color Color::toRGBA() const
     if(m_mode == Color::Mode::RGB)
         return *this;
 
-    Color color;
+    Color color(*this);
     color.toRGBA_InPlace();
 
     return color;
@@ -156,10 +157,12 @@ void Color::toRGBA_InPlace()
 {
     if(m_mode == Color::Mode::HSV)
     {
-        rgb_to_hsv(
-            rgb.r,  rgb.g,  rgb.b,
-           &hsv.h, &hsv.s, &hsv.v
+        hsv_to_rgb(
+             hsv.h,  hsv.s,  hsv.v,
+            &rgb.r, &rgb.g, &rgb.b
         );
+
+        m_mode = Color::Mode::RGB;
     }
 
     //COWTODO: Implement other modes....
@@ -169,10 +172,10 @@ void Color::toRGBA_InPlace()
 std::string Color::toHexRGBA(const std::string &prefix /* = "0x"*/)
 {
     std::stringstream ss;
-    ss << std::hex 
-        << std::setw(6) 
+    ss << std::hex
+        << std::setw(6)
         << std::setfill('0')
-        << toPackedRGBA(); 
+        << toPackedRGBA();
 
     return ss.str();
 }
@@ -180,11 +183,11 @@ std::string Color::toHexRGBA(const std::string &prefix /* = "0x"*/)
 std::string Color::toHexRGB(const std::string &prefix /* = "0x"*/)
 {
     std::stringstream ss;
-    ss << std::hex 
-       << std::setw(6) 
+    ss << std::hex
+       << std::setw(6)
        << std::setfill('0')
-       << toPackedRGB(); 
-    
+       << toPackedRGB();
+
     return ss.str();
 }
 
@@ -196,7 +199,7 @@ Color Color::toHSV() const
     if(m_mode == Color::Mode::HSV)
         return *this;
 
-    Color color;
+    Color color(*this);
     color.toHSV_InPlace();
 
     return color;
@@ -204,6 +207,15 @@ Color Color::toHSV() const
 
 void  Color::toHSV_InPlace()
 {
+    if(m_mode == Color::Mode::RGB)
+    {
+        rgb_to_hsv(
+            rgb.r,  rgb.g,  rgb.b,
+            &hsv.h, &hsv.s, &hsv.v
+        );
+
+        m_mode = Color::Mode::HSV;
+    }
 }
 
 
@@ -259,6 +271,34 @@ void CoreColor::hsv_to_rgb(
     float   h, float  s, float  v,
     float  *r, float *g, float *b)
 {
-    //COWTODO: Implement....
+    //Formula from: http://www.easyrgb.com/en/math.php
+    if(s == 0)
+    {
+        //Copy the values to output vars.
+        *r = *g = *b = v;
+        return;
+    }
+
+    float var_h = (h * 6);
+    if(var_h == 6) var_h = 0; //H must be < 1
+
+    float var_i = floorf(var_h); //Or ... var_i = floor( var_h )
+
+    float var_1 = v * (1 - s );
+    float var_2 = v * (1 - s * (var_h - var_i));
+    float var_3 = v * (1 - s * (1 - (var_h - var_i)));
+
+    float var_r, var_g, var_b;
+    if      (var_i == 0) { var_r = v    ;  var_g = var_3;  var_b = var_1; }
+    else if (var_i == 1) { var_r = var_2;  var_g = v    ;  var_b = var_1; }
+    else if (var_i == 2) { var_r = var_1;  var_g = v    ;  var_b = var_3; }
+    else if (var_i == 3) { var_r = var_1;  var_g = var_2;  var_b = v    ; }
+    else if (var_i == 4) { var_r = var_3;  var_g = var_1;  var_b = v    ; }
+    else                 { var_r = v    ;  var_g = var_1;  var_b = var_2; }
+
+    //Copy the values to output vars.
+    *r = var_r;
+    *g = var_g;
+    *b = var_b;
 }
 
