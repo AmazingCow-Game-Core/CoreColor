@@ -32,7 +32,7 @@ public:
 
     //HEX
     static Color MakeHex(uint hex, bool hasAlpha = false);
-    static Color MakeHexStr(const char *pHexStr);
+    static Color MakeHexStr(const std::string &hex);
 
     //HSV
     static Color MakeHSV(float h, float s, float v);

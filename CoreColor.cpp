@@ -51,11 +51,29 @@ Color Color::MakeHex(uint hex, bool hasAlpha /* = false */)
     );
 }
 
-Color Color::MakeHexStr(const char *pHexStr)
+Color Color::MakeHexStr(const std::string &hex)
 {
-    //COWTODO(n2omatt): Implement....
-    return MakeHex(0, false);
+    auto beg_it = std::begin(hex);
+
+    // #RRGGBB - with the # at start.    
+    if(hex[0] == '#')
+        ++beg_it; //Skip the # (first char)...
+
+    // 0xRRGGBB - with the 0x at start.
+    else if(hex[0] == '0' && hex[1] == 'x')
+        beg_it += 2; //Skip the 0x (First and second chars)...
+
+    // RRGGBB - without any prefix stuff.
+    auto size         = std::end(hex) - beg_it;    
+    auto packed_value = 0;
+    
+    //COWTODO(n2omatt): asset the value is 6 or 8.
+    std::string buf(beg_it, std::end(hex));
+    sscanf(buf.c_str(), "%x", &packed_value);
+    
+    return Color::MakeHex(packed_value, size == 8);
 }
+
 
 //HSV
 Color Color::MakeHSV(float h, float s, float v)
