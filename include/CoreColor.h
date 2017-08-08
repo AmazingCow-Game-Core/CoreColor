@@ -44,4 +44,5 @@
 //  It's only purpose is to ease the lib usage.
 #include "CoreColor_Utils.h"
 #include "Color.h"
+#include "Convert.h"
 

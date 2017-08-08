@@ -45,12 +45,26 @@
 
 NS_CORECOLOR_BEGIN
 
+// RGB -> XXX //
 void rgb_to_hsv(
     float  r, float  g, float  b,
     float *h, float *s, float *v);
 
+void rgb_to_hsl(
+    float  r, float  g, float  b,
+    float *h, float *s, float *l);
+
+
+// HSV -> XXX //
 void hsv_to_rgb(
     float  h,  float  s, float v,
     float  *r, float *g, float *b);
+
+
+// HSL -> XXX //
+void hsl_to_rgb(
+    float   h, float  s, float  l,
+    float  *r, float *g, float *b);
+
 
 NS_CORECOLOR_END

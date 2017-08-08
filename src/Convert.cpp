@@ -100,6 +100,55 @@ void CoreColor::rgb_to_hsv(
     *v = V;
 }
 
+void CoreColor::rgb_to_hsl(
+    float  r, float  g, float  b,
+    float *h, float *s, float *l)
+{
+    //Formula taken from:
+    //  http://www.easyrgb.com/en/math.php
+    auto var_min = std::min({r, g, b});
+    auto var_max = std::max({r, g, b});
+    auto del_max = (var_max - var_min);
+
+    float H = 0,
+          S = 0,
+          L = (var_max + var_min) / 2.0f;
+
+    //This is gray, no chroma
+    if(del_max == 0)
+    {
+        //Copy the values to output vars.
+        *h = H;
+        *s = S;
+        *l = L;
+
+        return;
+    }
+
+    if(L < 0.5f) S = del_max / (var_max + var_min);
+    else         S = del_max / (2.0f - var_max - var_min);
+
+    float del_r = (((var_max - r) / 6.0f) + (del_max / 2.0f)) / del_max;
+    float del_g = (((var_max - g) / 6.0f) + (del_max / 2.0f)) / del_max;
+    float del_b = (((var_max - b) / 6.0f) + (del_max / 2.0f)) / del_max;
+
+    if     (r == var_max) H = (del_b - del_g);
+    else if(g == var_max) H = kOneThird + (del_r - del_b);
+    else if(b == var_max) H = kTwoThird + (del_g - del_r);
+
+    if     (H < 0) H += 1;
+    else if(H > 1) H -= 1;
+
+    //Copy to the output vars.
+    *h = H;
+    *s = S;
+    *l = L;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// HSV -> XXX                                                                 //
+////////////////////////////////////////////////////////////////////////////////
 void CoreColor::hsv_to_rgb(
     float   h, float  s, float  v,
     float  *r, float *g, float *b)
@@ -135,3 +184,47 @@ void CoreColor::hsv_to_rgb(
     *g = var_g;
     *b = var_b;
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+// HSL -> XXX                                                                 //
+////////////////////////////////////////////////////////////////////////////////
+float _hsl_hue_2_rgb(float v1, float v2, float vH)
+{
+    if     (vH < 0.0f) vH += 1.0f;
+    else if(vH > 1.0f) vH -= 1.0f;
+
+    if((6.0f * vH) < 1.0f) return (v1 + (v2 - v1) * 6.0f * vH);
+    if((2.0f * vH) < 1.0f) return (v2);
+    if((3.0f * vH) < 2.0f) return (v1 + (v2 - v1) * (kTwoThird - vH) * 6.0f);
+
+    return v1;
+}
+
+void CoreColor::hsl_to_rgb(
+    float   h, float  s, float  l,
+    float  *r, float *g, float *b)
+{
+    if(s == 0)
+    {
+        *r = l;
+        *g = l;
+        *b = l;
+
+        return;
+    }
+
+    float var_1 = 0,
+          var_2 = 0;
+
+    var_2 = (l < 0.5f) ? (l * (1 + s))
+                       : (l + s) - (s * l);
+
+    var_1 = (2 * l) - var_2;
+
+    *r = _hsl_hue_2_rgb(var_1, var_2, h + kOneThird);
+    *g = _hsl_hue_2_rgb(var_1, var_2, h);
+    *b = _hsl_hue_2_rgb(var_1, var_2, h - kOneThird);
+}
+
+
