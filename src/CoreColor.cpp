@@ -124,6 +124,15 @@ Color Color::MakeHSV(float h, float s, float v)
     return color;
 }
 
+ //HSL
+Color Color::MakeHSL(float h, float s, float l)
+{
+    Color color;
+    color.setHSL(h, s, l);
+
+    return color;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Getter Methods                                                            //
@@ -167,6 +176,17 @@ void Color::setHSV(float h, float s, float v, float a /* = 1.0f */)
     hsv.s = s;
     hsv.v = v;
     hsv.a = 1;
+}
+
+//HSL
+void Color::setHSL(float h, float s, float l, float a /* = 1.0f */)
+{
+    m_mode = Color::Mode::HSL;
+
+    hsl.h = h;
+    hsl.s = s;
+    hsl.l = l;
+    hsl.a = 1;
 }
 
 
@@ -213,16 +233,24 @@ Color Color::toRGBA() const
 
 void Color::toRGBA_InPlace()
 {
+    //HSV -> RGBA : Direct Conversion.
     if(m_mode == Color::Mode::HSV)
     {
         hsv_to_rgb(
              hsv.h,  hsv.s,  hsv.v,
             &rgb.r, &rgb.g, &rgb.b
         );
-
-        m_mode = Color::Mode::RGB;
+    }
+    //HSL -> RGBA : Direct Conversion.
+    if(m_mode == Color::Mode::HSL)
+    {
+        hsl_to_rgb(
+            hsl.h, hsl.s, hsl.l,
+            &rgb.r, &rgb.g, &rgb.b
+        );
     }
 
+    m_mode = Color::Mode::RGB;
     //COWTODO: Implement other modes....
 }
 
@@ -263,15 +291,56 @@ Color Color::toHSV() const
     return color;
 }
 
-void  Color::toHSV_InPlace()
+void Color::toHSV_InPlace()
 {
+    //RGBA -> HSV : Direct Conversion.
     if(m_mode == Color::Mode::RGB)
     {
         rgb_to_hsv(
             rgb.r,  rgb.g,  rgb.b,
             &hsv.h, &hsv.s, &hsv.v
         );
-
-        m_mode = Color::Mode::HSV;
     }
+    //HSL -> HSV : No Direct Conversion.
+    //  Need transform to RGBA first.
+    else if(m_mode == Color::Mode::HSL)
+    {
+        this->toRGBA_InPlace();
+        this->toHSV_InPlace ();
+    }
+
+    m_mode = Color::Mode::HSV;
+}
+
+Color Color::toHSL() const
+{
+    //Already on the correct color mode...
+    if(m_mode == Color::Mode::HSL)
+        return *this;
+
+    Color color(*this);
+    color.toHSL_InPlace();
+
+    return color;
+}
+
+void Color::toHSL_InPlace()
+{
+    //RGBA -> HSL : Direct Conversion.
+    if(m_mode == Color::Mode::RGB)
+    {
+        rgb_to_hsl(
+            rgb.r,  rgb.g,  rgb.b,
+            &hsl.h, &hsl.s, &hsl.l
+        );
+    }
+    //HSV -> HSL : No Direct Conversion.
+    //  Need transform to RGBA first.
+    else if(m_mode == Color::Mode::HSV)
+    {
+        this->toRGBA_InPlace();
+        this->toHSL_InPlace ();
+    }
+
+    m_mode = Color::Mode::HSL;
 }
