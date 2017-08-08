@@ -70,7 +70,6 @@ public:
     // Static Methods //
 public:
     //RGBA
-    static Color MakeRGBA(int r, int g, int b, int a = 255);
     static Color MakeRGBA(float r, float g, float b, float a = 1.0f);
 
     //HEX
@@ -92,7 +91,6 @@ public:
     // Setter Methods //
 public:
     //RGBA
-    void setRGBA(int r, int g, int b, int a = 255);
     void setRGBA(float r, float g, float b, float a = 1.0f);
 
     //HSV

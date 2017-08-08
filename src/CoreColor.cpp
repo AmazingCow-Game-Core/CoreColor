@@ -46,6 +46,8 @@
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
+//CoreColor
+#include "Convert.h"
 
 //Usings
 USING_NS_CORECOLOR;
@@ -55,14 +57,6 @@ USING_NS_CORECOLOR;
 // Static Methods                                                            //
 ///////////////////////////////////////////////////////////////////////////////
 //RGB
-Color Color::MakeRGBA(int r, int g, int b, int a /* = 255 */)
-{
-    Color color;
-    color.setRGBA(r, g, b, a);
-
-    return color;
-}
-
 Color Color::MakeRGBA(float r, float g, float b, float a /* = 1.0f */)
 {
     Color color;
@@ -147,16 +141,6 @@ Color::Mode Color::getMode() const
 // Setter Methods                                                            //
 ///////////////////////////////////////////////////////////////////////////////
 //RGB
-void Color::setRGBA(int r, int g, int b, int a /* = 255 */)
-{
-    setRGBA(
-        r / 255.0f,
-        g / 255.0f,
-        b / 255.0f,
-        a / 255.0f
-    );
-}
-
 void Color::setRGBA(float r, float g, float b, float a /* = 1.0f */)
 {
     m_mode = Color::Mode::RGB;
@@ -193,7 +177,7 @@ void Color::setHSL(float h, float s, float l, float a /* = 1.0f */)
 ///////////////////////////////////////////////////////////////////////////////
 // Public Methods                                                            //
 ///////////////////////////////////////////////////////////////////////////////
-//HSV
+//RGB
 Color::uint Color::toPackedRGBA() const
 {
     //COWTODO(n2omatt): implement...
@@ -276,7 +260,6 @@ std::string Color::toHexRGB(const std::string &prefix /* = "0x"*/)
 
     return ss.str();
 }
-
 
 //HSV
 Color Color::toHSV() const
