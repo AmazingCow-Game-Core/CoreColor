@@ -50,22 +50,27 @@
 ////////////////////////////////////////////////////////////////////////////////
 constexpr auto kOneThird = 1.0f / 3.0f;
 constexpr auto kTwoThird = 2.0f / 3.0f;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// RGB -> XXX                                                                 //
+////////////////////////////////////////////////////////////////////////////////
 void CoreColor::rgb_to_hsv(
     float  r, float  g, float  b,
     float *h, float *s, float *v)
 {
     //Formula from:
     //  http://www.easyrgb.com/en/math.php
-    auto min   = std::min({r, g, b});
-    auto max   = std::max({r, g, b});
-    auto delta = max - min;
+    auto var_min = std::min({r, g, b});
+    auto var_max = std::max({r, g, b});
+    auto del_max = (var_max - var_min);
 
     float H = 0,
           S = 0,
-          V = max;
+          V = var_max;
 
     //Color is gray, it has no chroma.
-    if(delta == 0)
+    if(del_max == 0)
     {
         //Copy to the output vars.
         *h = H;
@@ -76,18 +81,18 @@ void CoreColor::rgb_to_hsv(
     }
 
     //Color has chroma...
-    S = delta / max;
+    S = del_max / var_max;
 
-    auto delta_r = ((( max - r) / 6.0f) + (delta / 2.0f)) / delta;
-    auto delta_g = ((( max - g) / 6.0f) + (delta / 2.0f)) / delta;
-    auto delta_b = ((( max - b) / 6.0f) + (delta / 2.0f)) / delta;
+    auto del_r = (((var_max - r) / 6.0f) + (del_max / 2.0f)) / del_max;
+    auto del_g = (((var_max - g) / 6.0f) + (del_max / 2.0f)) / del_max;
+    auto del_b = (((var_max - b) / 6.0f) + (del_max / 2.0f)) / del_max;
 
-    if     (r == max) H = (delta_b - delta_g);
-    else if(g == max) H = (1.0f / 3.0f) + (delta_r  - delta_b);
-    else if(g == max) H = (2.0f / 3.0f) + (delta_g  - delta_r);
+    if     (r == var_max) H = (del_b - del_g);
+    else if(g == var_max) H = kOneThird + (del_r  - del_b);
+    else if(b == var_max) H = kTwoThird + (del_g  - del_r);
 
     if     (H < 0) H += 1;
-    else if(H > 0) H -= 1;
+    else if(H > 1) H -= 1;
 
     //Copy to the output vars.
     *h = H;
