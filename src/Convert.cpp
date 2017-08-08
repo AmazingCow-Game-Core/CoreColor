@@ -40,8 +40,16 @@
 
 //Header
 #include "Convert.h"
+//std
+#include <algorithm>
+#include <cmath>
 
 
+////////////////////////////////////////////////////////////////////////////////
+// Constants                                                                  //
+////////////////////////////////////////////////////////////////////////////////
+constexpr auto kOneThird = 1.0f / 3.0f;
+constexpr auto kTwoThird = 2.0f / 3.0f;
 void CoreColor::rgb_to_hsv(
     float  r, float  g, float  b,
     float *h, float *s, float *v)
