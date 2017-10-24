@@ -24,6 +24,8 @@
 #include <algorithm>
 #include <cmath>
 
+//COWTODO(n2omatt): Should we validate the input range???
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constants                                                                  //
@@ -125,6 +127,15 @@ void CoreColor::rgb_to_hsl(
     *l = L;
 }
 
+void CoreColor::rgb_to_cmy(
+    float r,  float  g, float  b,
+    float *c, float *m, float *y)
+{
+    *c = 1.0f - r;
+    *m = 1.0f - g;
+    *y = 1.0f - b;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // HSV -> XXX                                                                 //
@@ -208,3 +219,62 @@ void CoreColor::hsl_to_rgb(
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
+// CMY -> XXX                                                                 //
+////////////////////////////////////////////////////////////////////////////////
+void CoreColor::cmy_to_rgb(
+    float  c, float  m, float  y,
+    float *r, float *g, float *b)
+{
+    //Formula taken from:
+    //  http://www.easyrgb.com/en/math.php
+    *r = 1.0f - c;
+    *g = 1.0f - m;
+    *b = 1.0f - y;
+}
+
+
+void CoreColor::cmy_to_cmyk(
+    float  c, float  m, float  y,
+    float *C, float *M, float *Y, float *K)
+{
+    //Formula taken from:
+    //  http://www.easyrgb.com/en/math.php
+    auto var_K = 1.0f;
+
+    if(c < var_K) var_K = c;
+    if(m < var_K) var_K = m;
+    if(y < var_K) var_K = y;
+
+    *K = var_K;
+
+    //Black only
+    if(var_K == 1.0f)
+    {
+        *C = 0;
+        *M = 0;
+        *Y = 0;
+
+        return;
+    }
+
+    *C = (c - var_K) / (1.0f - var_K);
+    *M = (m - var_K) / (1.0f - var_K);
+    *Y = (y - var_K) / (1.0f - var_K);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// CMYK -> XXX                                                                //
+////////////////////////////////////////////////////////////////////////////////
+void CoreColor::cmyk_to_cmy(
+    float  c, float  m, float  y, float k,
+    float *C, float *M, float *Y)
+{
+    //Formula taken from:
+    //  http://www.easyrgb.com/en/math.php
+
+    *C = (c * (1.0f - k) + k);
+    *M = (m * (1.0f - k) + k);
+    *Y = (y * (1.0f - k) + k);
+}

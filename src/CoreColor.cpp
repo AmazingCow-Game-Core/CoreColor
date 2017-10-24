@@ -86,7 +86,6 @@ Color Color::MakeHexStr(const std::string &hex)
     return Color::MakeHex(packed_value, size == 8);
 }
 
-
 //HSV
 Color Color::MakeHSV(float h, float s, float v)
 {
@@ -96,11 +95,30 @@ Color Color::MakeHSV(float h, float s, float v)
     return color;
 }
 
- //HSL
+//HSL
 Color Color::MakeHSL(float h, float s, float l)
 {
     Color color;
     color.setHSL(h, s, l);
+
+    return color;
+}
+
+//CMY
+Color Color::MakeCMY(float c, float m, float y)
+{
+    Color color;
+    color.setCMY(c, m, y);
+
+    return color;
+}
+
+
+//CMYK
+Color Color::MakeCMYK(float c, float m, float y, float k)
+{
+    Color color;
+    color.setCMYK(c, m, y, k);
 
     return color;
 }
@@ -149,6 +167,29 @@ void Color::setHSL(float h, float s, float l, float a /* = 1.0f */)
     hsl.s = s;
     hsl.l = l;
     hsl.a = 1;
+}
+
+//CMY
+void Color::setCMY(float c, float m, float y)
+{
+    m_mode = Color::Mode::CMY;
+
+    cmy.c = c;
+    cmy.m = m;
+    cmy.y = y;
+
+    m_data[3] = 0; //We're not using this on this color mode.
+}
+
+//CMYK
+void Color::setCMYK(float c, float m, float y, float k)
+{
+    m_mode = Color::Mode::CMYK;
+
+    cmyk.c = c;
+    cmyk.m = m;
+    cmyk.y = y;
+    cmyk.k = k;
 }
 
 
@@ -207,8 +248,9 @@ void Color::toRGBA_InPlace()
             &rgb.r, &rgb.g, &rgb.b
         );
     }
+
     //HSL -> RGBA : Direct Conversion.
-    if(m_mode == Color::Mode::HSL)
+    else if(m_mode == Color::Mode::HSL)
     {
         hsl_to_rgb(
             hsl.h, hsl.s, hsl.l,
@@ -216,9 +258,25 @@ void Color::toRGBA_InPlace()
         );
     }
 
+    //CMY -> RGBA : Direct Conversion.
+    else if(m_mode == Color::Mode::CMY)
+    {
+        cmy_to_rgb(
+            cmy.c, cmy.m, cmy.y,
+            &rgb.r, &rgb.g, &rgb.b
+        );
+    }
+
+    //CMYK -> RGBA : Needs to convert to CMY first.
+    else if(m_mode == Color::Mode::CMYK)
+    {
+        this->toCMY_InPlace ();
+        this->toRGBA_InPlace();
+    }
+
     m_mode = Color::Mode::RGB;
-    //COWTODO: Implement other modes....
 }
+
 
 //Hex
 std::string Color::toHexRGBA(const std::string &prefix /* = "0x"*/)
@@ -243,6 +301,7 @@ std::string Color::toHexRGB(const std::string &prefix /* = "0x"*/)
     return ss.str();
 }
 
+
 //HSV
 Color Color::toHSV() const
 {
@@ -266,9 +325,7 @@ void Color::toHSV_InPlace()
             &hsv.h, &hsv.s, &hsv.v
         );
     }
-    //HSL -> HSV : No Direct Conversion.
-    //  Need transform to RGBA first.
-    else if(m_mode == Color::Mode::HSL)
+    else
     {
         this->toRGBA_InPlace();
         this->toHSV_InPlace ();
@@ -277,6 +334,8 @@ void Color::toHSV_InPlace()
     m_mode = Color::Mode::HSV;
 }
 
+
+//HSL
 Color Color::toHSL() const
 {
     //Already on the correct color mode...
@@ -299,13 +358,93 @@ void Color::toHSL_InPlace()
             &hsl.h, &hsl.s, &hsl.l
         );
     }
-    //HSV -> HSL : No Direct Conversion.
-    //  Need transform to RGBA first.
-    else if(m_mode == Color::Mode::HSV)
+    else
     {
         this->toRGBA_InPlace();
         this->toHSL_InPlace ();
     }
 
     m_mode = Color::Mode::HSL;
+}
+
+
+//CMY
+Color Color::toCMY() const
+{
+    //Already on correct color mode...
+    if(m_mode == Color::Mode::CMY)
+        return *this;
+
+    Color color(*this);
+    color.toCMY_InPlace();
+
+    return color;
+}
+
+void Color::toCMY_InPlace()
+{
+    //RGBA -> CMY : Direct Conversion.
+    if(m_mode == Color::Mode::RGB)
+    {
+        rgb_to_cmy(
+            rgb.r,   rgb.g,  rgb.b,
+            &cmy.c, &cmy.m, &cmy.y
+        );
+    }
+
+    //CMYK -> CMY : Direct Conversion.
+    else if(m_mode == Color::Mode::CMYK)
+    {
+        cmyk_to_cmy(
+            cmyk.c, cmyk.m, cmyk.y, cmyk.k,
+            &cmy.c, &cmy.m, &cmy.y
+        );
+    }
+
+    //There's no direct conversion
+    //  So we need convert to RGBA first and then
+    //  convert to the correct color mode.
+    else
+    {
+        this->toRGBA_InPlace();
+        this->toCMY_InPlace ();
+    }
+
+    m_mode = Color::Mode::CMY;
+}
+
+
+//CMYK
+Color Color::toCMYK() const
+{
+    //Already on correct color mode...
+    if(m_mode == Color::Mode::CMYK)
+        return *this;
+
+    Color color(*this);
+    color.toCMYK_InPlace();
+
+    return color;
+}
+
+void Color::toCMYK_InPlace()
+{
+    //CMY -> CMYK : Direct Conversion.
+    if(m_mode == Color::Mode::CMY)
+    {
+        cmy_to_cmyk(
+            cmy.c,    cmy.m,   cmy.y,
+            &cmyk.c, &cmyk.m, &cmyk.y, &cmyk.k
+        );
+    }
+    //There's no direct conversion
+    //  So we need convert to CMY first and then
+    //  convert to the correct color mode.
+    else
+    {
+        this->toCMY_InPlace ();
+        this->toCMYK_InPlace();
+    }
+
+    m_mode = Color::Mode::CMY;
 }

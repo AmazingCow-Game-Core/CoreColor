@@ -36,6 +36,10 @@ void rgb_to_hsl(
     float  r, float  g, float  b,
     float *h, float *s, float *l);
 
+void rgb_to_cmy(
+    float r,  float  g, float b,
+    float *c, float *m, float *y);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // HSV -> XXX                                                                 //
@@ -52,5 +56,24 @@ void hsl_to_rgb(
     float   h, float  s, float  l,
     float  *r, float *g, float *b);
 
+
+////////////////////////////////////////////////////////////////////////////////
+// CMY -> XXX                                                                 //
+////////////////////////////////////////////////////////////////////////////////
+void cmy_to_rgb(
+    float  c, float  m, float  y,
+    float *r, float *g, float *b);
+
+void cmy_to_cmyk(
+    float  c, float  m, float  y,
+    float *C, float *M, float *Y, float *K);
+
+
+////////////////////////////////////////////////////////////////////////////////
+// CMYK -> XXX                                                                //
+////////////////////////////////////////////////////////////////////////////////
+void cmyk_to_cmy(
+    float  c, float  m, float  y, float k,
+    float *C, float *M, float *Y);
 
 NS_CORECOLOR_END

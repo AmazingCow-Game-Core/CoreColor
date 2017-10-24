@@ -39,9 +39,11 @@ public:
     ///@brief
     ///  Describes witch color space the object is in a given moment.
     enum class Mode {
-        RGB = 10,
-        HSV = 20,
-        HSL = 30
+        RGB  = 10,
+        HSV  = 20,
+        HSL  = 30,
+        CMY  = 40,
+        CMYK = 50
     };
 
 
@@ -53,6 +55,11 @@ public:
     struct HSV { float h, s, v, a; };
     ///@brief HSL object representation.
     struct HSL { float h, s, l, a; };
+    ///@brief CMY object representation.
+    struct CMY { float c; float m; float y; };
+    ///@brief CMYK object representation.
+    struct CMYK { float c; float m; float y; float k; };
+
 
 
     // Static Methods //
@@ -113,6 +120,7 @@ public:
     ///  The Color object in HSV color space.
     static Color MakeHSV(float h, float s, float v);
 
+    //HSL
     ///@brief
     ///  Create a Color object initialized in the HSL color space.
     ///@param h
@@ -124,6 +132,12 @@ public:
     ///@returns
     ///  The Color object in HSL color space.
     static Color MakeHSL(float h, float s, float l);
+
+    //CMY
+    static Color MakeCMY(float c, float m, float y);
+
+    //CMYK
+    static Color MakeCMYK(float c, float m, float y, float k);
 
 
     // Getter Methods //
@@ -170,6 +184,12 @@ public:
     ///  Luminance value (0,1)
     void setHSL(float h, float s, float l, float a = 1.0f);
 
+    //CMY
+    void setCMY(float c, float m, float y);
+
+    //CMYK
+    void setCMYK(float c, float m, float y, float k);
+
 
     // To Methods //
 public:
@@ -198,7 +218,6 @@ public:
     ///  Converts the object to RGBA color space.
     void toRGBA_InPlace();
 
-
     //Hex
     ///@brief
     ///  Gets a converted hexadecimal string representation of the object.
@@ -211,7 +230,6 @@ public:
     ///@param prefix
     ///  Which prefix should be prepend on the returned string.
     std::string toHexRGB(const std::string &prefix = "0x");
-
 
     //HSV
     ///@brief
@@ -231,6 +249,14 @@ public:
     ///  Converts the object to HSV color space.
     void toHSL_InPlace();
 
+    //CMY
+    Color toCMY() const;
+    void toCMY_InPlace();
+
+    //CMYK
+    Color toCMYK() const;
+    void toCMYK_InPlace();
+
 
     // iVars //
 private:
@@ -239,9 +265,11 @@ private:
 public:
     union {
         float m_data[4];
-        HSV hsv;
-        HSL hsl;
-        RGB rgb;
+        HSV   hsv;
+        HSL   hsl;
+        RGB   rgb;
+        CMY   cmy;
+        CMYK  cmyk;
     };
 };
 
