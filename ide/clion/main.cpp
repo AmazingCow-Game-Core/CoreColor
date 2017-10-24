@@ -19,20 +19,17 @@ void print_hsl(const CoreColor::Color::HSL &hsl)
     printf("hsl: %f %f %f\n", h, s, l);
 }
 
+void print_cmy(const CoreColor::Color::CMY &cmy)
+{
+    printf("cmy: %f, %f, %f\n", cmy.c, cmy.m, cmy.y);
+}
+
 int main()
 {
-    auto rgb = CoreColor::Color::MakeRGBA(0.999999762f, 0, 1);
-    auto hsv = rgb.toHSV();
-    auto hsl = rgb.toHSL();
+    auto rgb = CoreColor::Color::MakeRGBA(1, 0, 1);
+    auto cmy = rgb.toCMY();
 
-    print_hsv(hsv.hsv);
-    print_hsl(hsl.hsl);
-
-    auto hsv2 = hsl.toHSV();
-    auto hsl2 = hsv.toHSL();
-
-    print_hsv(hsv2.hsv);
-    print_hsl(hsl2.hsl);
+    print_cmy(cmy.toRGBA().toHSL().toHSV().toCMY().cmy);
 
     return 0;
 }
