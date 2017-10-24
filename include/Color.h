@@ -134,9 +134,31 @@ public:
     static Color MakeHSL(float h, float s, float l);
 
     //CMY
+    ///@brief
+    ///  Create a Color object initialized in the CMY color space.
+    ///@param c
+    ///  Cyan value (0,1)
+    ///@param m
+    ///  Magenta value (0,1)
+    ///@param y
+    ///  Yellow value (0,1)
+    ///@returns
+    ///  The Color object in CMY color space.
     static Color MakeCMY(float c, float m, float y);
 
     //CMYK
+    ///@brief
+    ///  Create a Color object initialized in the CMYK color space.
+    ///@param c
+    ///  Cyan value (0,1)
+    ///@param m
+    ///  Magenta value (0,1)
+    ///@param y
+    ///  Yellow value (0,1)
+    ///@param k
+    ///  Key value (0,1)
+    ///@returns
+    ///  The Color object in CMY color space.
     static Color MakeCMYK(float c, float m, float y, float k);
 
 
@@ -185,9 +207,27 @@ public:
     void setHSL(float h, float s, float l, float a = 1.0f);
 
     //CMY
+    ///@brief
+    ///  Set the object's color mode to CMY with the given values.
+    ///@param c
+    ///  Cyan value (0,1)
+    ///@param m
+    ///  Magenta value (0,1)
+    ///@param y
+    ///  Yellow value (0,1)
     void setCMY(float c, float m, float y);
 
     //CMYK
+    ///@brief
+    ///  Set the object's color mode to CMYK with the given values.
+    ///@param c
+    ///  Cyan value (0,1)
+    ///@param m
+    ///  Magenta value (0,1)
+    ///@param y
+    ///  Yellow value (0,1)
+    ///@param k
+    ///  Key value (0,1)
     void setCMYK(float c, float m, float y, float k);
 
 
@@ -250,11 +290,21 @@ public:
     void toHSL_InPlace();
 
     //CMY
+    ///@brief
+    ///  Gets a converted Color object in the CMY color space.
     Color toCMY() const;
+
+    ///@brief
+    ///  Converts the object to CMY color space.
     void toCMY_InPlace();
 
     //CMYK
+    ///@brief
+    ///  Gets a converted Color object in the CMYK color space.
     Color toCMYK() const;
+
+    ///@brief
+    ///  Converts the object to CMYK color space.
     void toCMYK_InPlace();
 
 
