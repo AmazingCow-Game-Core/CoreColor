@@ -158,8 +158,14 @@ void Color::setHSL(float h, float s, float l, float a /* = 1.0f */)
 //RGB
 Color::uint Color::toPackedRGBA() const
 {
-    //COWTODO(n2omatt): implement...
-    return 0;
+    //Just let the RGB function pack the RGB components
+    //shift them and add the Alpha component.
+    auto value = Color::toPackedRGB();
+    auto alpha = static_cast<uint>(m_data[3] * 255);
+
+    value = (value << 8) + alpha;
+
+    return value;
 }
 
 Color::uint Color::toPackedRGB() const
@@ -168,8 +174,6 @@ Color::uint Color::toPackedRGB() const
         ? *this           //Refrence to itself.
         : this->toRGBA(); //New converted color.
 
-    //COWTODO: this function is nearly idendical to the RGBA one.
-    //  check what can be refactored.
     constexpr auto kComponentsCount = (3 - 1); //RGB -1 to be Zero based.
 
     uint packed_value = 0;
