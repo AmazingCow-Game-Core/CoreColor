@@ -225,9 +225,9 @@ std::string Color::toHexRGBA(const std::string &prefix /* = "0x"*/)
 {
     std::stringstream ss;
     ss << std::hex
-        << std::setw(6)
-        << std::setfill('0')
-        << toPackedRGBA();
+       << std::setw(6)
+       << std::setfill('0')
+       << toPackedRGBA();
 
     return ss.str();
 }
