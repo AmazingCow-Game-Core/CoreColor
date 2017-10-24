@@ -1,0 +1,22 @@
+/**
+@mainpage The CoreColor documentation.
+
+__CoreColor__  A C++ color space conversion library.
+
+
+You may find interesting take a look in:
+
+-  Color.h class documentation - The fun is there.
+-  Convert.h documentation - If you only want free functions.
+\n\n
+
+- [Project GitHub](https://www.github.com/AmazingCow-Libs/CoreColor/). \n
+- [AmazingCow FLOSS Projects](http://floss.amazingcow.com).
+
+Please report any bugs found to [help_bugs@amazingcow.com](mailto:help_bugs@amazingcow.com),
+and any questions about the project to [help_floss@amazingcow.com](mailto:help_floss@amazingcow.com)!
+
+You are __very welcomed__ to __share__ and __hack__ it.
+
+Thank you and we hope that you enjoy __CoreDir__.
+*/
