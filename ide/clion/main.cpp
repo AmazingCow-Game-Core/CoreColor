@@ -1,4 +1,5 @@
-#include "CoreColor.h"
+
+#include "CoreColor/CoreColor.h"
 
 
 void print_hsv(const CoreColor::Color::HSV &hsv)
