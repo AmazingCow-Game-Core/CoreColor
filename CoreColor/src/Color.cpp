@@ -7,7 +7,7 @@
 //                    |   _   ||     |_ |       ||   _   |                    //
 //                    |__| |__||_______||_______||__| |__|                    //
 //                             www.amazingcow.com                             //
-//  File      : CoreColor.cpp                                                 //
+//  File      : Color.cpp                                                     //
 //  Project   : CoreColor                                                     //
 //  Date      : Aug 08, 2017                                                  //
 //  License   : GPLv3                                                         //
@@ -19,13 +19,13 @@
 //---------------------------------------------------------------------------~//
 
 // Header
-#include "CoreColor.h"
+#include "../include/Color.h"
 // std
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
 // CoreColor
-#include "Convert.h"
+#include "../include/Convert.h"
 
 // Usings
 USING_NS_CORECOLOR;

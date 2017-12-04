@@ -23,7 +23,7 @@
 // std
 #include <string>
 // CoreColor
-#include "CoreColor.h"
+#include "CoreColor_Utils.h"
 
 
 NS_CORECOLOR_BEGIN

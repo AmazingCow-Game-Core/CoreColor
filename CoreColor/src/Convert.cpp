@@ -19,7 +19,7 @@
 //---------------------------------------------------------------------------~//
 
 // Header
-#include "Convert.h"
+#include "../include/Convert.h"
 // std
 #include <algorithm>
 #include <cmath>
