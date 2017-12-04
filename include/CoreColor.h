@@ -15,14 +15,16 @@
 //  Copyright : AmazingCow - 2017                                             //
 //                                                                            //
 //  Description :                                                             //
-//                                                                            //
+//    This is an umbrella header!                                             //
+//    It's only purpose is to ease the lib usage.                             //
 //---------------------------------------------------------------------------~//
 
 #pragma once
 
-//This is an umbrella header!
-//  It's only purpose is to ease the lib usage.
-#include "CoreColor_Utils.h"
-#include "Color.h"
-#include "Convert.h"
+//----------------------------------------------------------------------------//
+// Export the headers                                                         //
+//----------------------------------------------------------------------------//
+#include "include/Color.h"
+#include "include/Convert.h"
+#include "include/CoreColor_Utils.h"
 

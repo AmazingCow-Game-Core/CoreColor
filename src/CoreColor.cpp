@@ -18,23 +18,23 @@
 //                                                                            //
 //---------------------------------------------------------------------------~//
 
-//Header
+// Header
 #include "CoreColor.h"
-//std
+// std
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
-//CoreColor
+// CoreColor
 #include "Convert.h"
 
-//Usings
+// Usings
 USING_NS_CORECOLOR;
 
 
-///////////////////////////////////////////////////////////////////////////////
-// Static Methods                                                            //
-///////////////////////////////////////////////////////////////////////////////
-//RGB
+//----------------------------------------------------------------------------//
+// RGBA Methods                                                               //
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
 Color Color::MakeRGBA(float r, float g, float b, float a /* = 1.0f */)
 {
     Color color;
@@ -43,100 +43,7 @@ Color Color::MakeRGBA(float r, float g, float b, float a /* = 1.0f */)
     return color;
 }
 
-//HEX
-Color Color::MakeHex(uint hex, bool hasAlpha /* = false */)
-{
-    if(hasAlpha)
-    {
-        return MakeRGBA(
-            static_cast<int>((hex & 0xFF000000) >> 24),
-            static_cast<int>((hex & 0x00FF0000) >> 16),
-            static_cast<int>((hex & 0x0000FF00) >>  8),
-            static_cast<int>((hex & 0x000000FF) >>  0)
-        );
-    }
-
-    return MakeRGBA(
-        static_cast<int>((hex & 0xFF0000) >> 16),
-        static_cast<int>((hex & 0x00FF00) >>  8),
-        static_cast<int>((hex & 0x0000FF) >>  0)
-    );
-}
-
-Color Color::MakeHexStr(const std::string &hex)
-{
-    auto beg_it = std::begin(hex);
-
-    // #RRGGBB - with the # at start.
-    if(hex[0] == '#')
-        ++beg_it; //Skip the # (first char)...
-
-    // 0xRRGGBB - with the 0x at start.
-    else if(hex[0] == '0' && hex[1] == 'x')
-        beg_it += 2; //Skip the 0x (First and second chars)...
-
-    // RRGGBB - without any prefix stuff.
-    auto size         = std::end(hex) - beg_it;
-    auto packed_value = 0;
-
-    //COWTODO(n2omatt): asset the value is 6 or 8.
-    std::string buf(beg_it, std::end(hex));
-    sscanf(buf.c_str(), "%x", &packed_value);
-
-    return Color::MakeHex(packed_value, size == 8);
-}
-
-//HSV
-Color Color::MakeHSV(float h, float s, float v)
-{
-    Color color;
-    color.setHSV(h, s, v);
-
-    return color;
-}
-
-//HSL
-Color Color::MakeHSL(float h, float s, float l)
-{
-    Color color;
-    color.setHSL(h, s, l);
-
-    return color;
-}
-
-//CMY
-Color Color::MakeCMY(float c, float m, float y)
-{
-    Color color;
-    color.setCMY(c, m, y);
-
-    return color;
-}
-
-
-//CMYK
-Color Color::MakeCMYK(float c, float m, float y, float k)
-{
-    Color color;
-    color.setCMYK(c, m, y, k);
-
-    return color;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Getter Methods                                                            //
-///////////////////////////////////////////////////////////////////////////////
-Color::Mode Color::getMode() const
-{
-    return m_mode;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Setter Methods                                                            //
-///////////////////////////////////////////////////////////////////////////////
-//RGB
+//------------------------------------------------------------------------------
 void Color::setRGBA(float r, float g, float b, float a /* = 1.0f */)
 {
     m_mode = Color::Mode::RGB;
@@ -147,56 +54,7 @@ void Color::setRGBA(float r, float g, float b, float a /* = 1.0f */)
     rgb.a = a;
 }
 
-//HSV
-void Color::setHSV(float h, float s, float v, float a /* = 1.0f */)
-{
-    m_mode = Color::Mode::HSV;
-
-    hsv.h = h;
-    hsv.s = s;
-    hsv.v = v;
-    hsv.a = 1;
-}
-
-//HSL
-void Color::setHSL(float h, float s, float l, float a /* = 1.0f */)
-{
-    m_mode = Color::Mode::HSL;
-
-    hsl.h = h;
-    hsl.s = s;
-    hsl.l = l;
-    hsl.a = 1;
-}
-
-//CMY
-void Color::setCMY(float c, float m, float y)
-{
-    m_mode = Color::Mode::CMY;
-
-    cmy.c = c;
-    cmy.m = m;
-    cmy.y = y;
-
-    m_data[3] = 0; //We're not using this on this color mode.
-}
-
-//CMYK
-void Color::setCMYK(float c, float m, float y, float k)
-{
-    m_mode = Color::Mode::CMYK;
-
-    cmyk.c = c;
-    cmyk.m = m;
-    cmyk.y = y;
-    cmyk.k = k;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Public Methods                                                            //
-///////////////////////////////////////////////////////////////////////////////
-//RGB
+//------------------------------------------------------------------------------
 Color::uint Color::toPackedRGBA() const
 {
     //Just let the RGB function pack the RGB components
@@ -209,6 +67,7 @@ Color::uint Color::toPackedRGBA() const
     return value;
 }
 
+//------------------------------------------------------------------------------
 Color::uint Color::toPackedRGB() const
 {
     const auto &color = (m_mode == Color::Mode::RGB)
@@ -226,6 +85,7 @@ Color::uint Color::toPackedRGB() const
     return packed_value;
 }
 
+//------------------------------------------------------------------------------
 Color Color::toRGBA() const
 {
     //Already on the correct color mode...
@@ -238,6 +98,7 @@ Color Color::toRGBA() const
     return color;
 }
 
+//------------------------------------------------------------------------------
 void Color::toRGBA_InPlace()
 {
     //HSV -> RGBA : Direct Conversion.
@@ -278,7 +139,54 @@ void Color::toRGBA_InPlace()
 }
 
 
-//Hex
+//----------------------------------------------------------------------------//
+// Hex Methods                                                                //
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
+Color Color::MakeHex(uint hex, bool hasAlpha /* = false */)
+{
+    if(hasAlpha)
+    {
+        return MakeRGBA(
+            static_cast<int>((hex & 0xFF000000) >> 24),
+            static_cast<int>((hex & 0x00FF0000) >> 16),
+            static_cast<int>((hex & 0x0000FF00) >>  8),
+            static_cast<int>((hex & 0x000000FF) >>  0)
+        );
+    }
+
+    return MakeRGBA(
+        static_cast<int>((hex & 0xFF0000) >> 16),
+        static_cast<int>((hex & 0x00FF00) >>  8),
+        static_cast<int>((hex & 0x0000FF) >>  0)
+    );
+}
+
+//------------------------------------------------------------------------------
+Color Color::MakeHexStr(const std::string &hex)
+{
+    auto beg_it = std::begin(hex);
+
+    // #RRGGBB - with the # at start.
+    if(hex[0] == '#')
+        ++beg_it; //Skip the # (first char)...
+
+    // 0xRRGGBB - with the 0x at start.
+    else if(hex[0] == '0' && hex[1] == 'x')
+        beg_it += 2; //Skip the 0x (First and second chars)...
+
+    // RRGGBB - without any prefix stuff.
+    auto size         = std::end(hex) - beg_it;
+    auto packed_value = 0;
+
+    //COWTODO(n2omatt): asset the value is 6 or 8.
+    std::string buf(beg_it, std::end(hex));
+    sscanf(buf.c_str(), "%x", &packed_value);
+
+    return Color::MakeHex(packed_value, size == 8);
+}
+
+//------------------------------------------------------------------------------
 std::string Color::toHexRGBA(const std::string &prefix /* = "0x"*/)
 {
     std::stringstream ss;
@@ -290,6 +198,7 @@ std::string Color::toHexRGBA(const std::string &prefix /* = "0x"*/)
     return ss.str();
 }
 
+//------------------------------------------------------------------------------
 std::string Color::toHexRGB(const std::string &prefix /* = "0x"*/)
 {
     std::stringstream ss;
@@ -302,7 +211,30 @@ std::string Color::toHexRGB(const std::string &prefix /* = "0x"*/)
 }
 
 
-//HSV
+//----------------------------------------------------------------------------//
+// HSV Methods                                                                //
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
+Color Color::MakeHSV(float h, float s, float v)
+{
+    Color color;
+    color.setHSV(h, s, v);
+
+    return color;
+}
+
+//------------------------------------------------------------------------------
+void Color::setHSV(float h, float s, float v, float a /* = 1.0f */)
+{
+    m_mode = Color::Mode::HSV;
+
+    hsv.h = h;
+    hsv.s = s;
+    hsv.v = v;
+    hsv.a = 1;
+}
+
+//------------------------------------------------------------------------------
 Color Color::toHSV() const
 {
     //Already on the correct color mode...
@@ -315,6 +247,7 @@ Color Color::toHSV() const
     return color;
 }
 
+//------------------------------------------------------------------------------
 void Color::toHSV_InPlace()
 {
     //RGBA -> HSV : Direct Conversion.
@@ -335,7 +268,30 @@ void Color::toHSV_InPlace()
 }
 
 
-//HSL
+//----------------------------------------------------------------------------//
+// HSL Methods                                                                //
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
+Color Color::MakeHSL(float h, float s, float l)
+{
+    Color color;
+    color.setHSL(h, s, l);
+
+    return color;
+}
+
+//------------------------------------------------------------------------------
+void Color::setHSL(float h, float s, float l, float a /* = 1.0f */)
+{
+    m_mode = Color::Mode::HSL;
+
+    hsl.h = h;
+    hsl.s = s;
+    hsl.l = l;
+    hsl.a = 1;
+}
+
+//------------------------------------------------------------------------------
 Color Color::toHSL() const
 {
     //Already on the correct color mode...
@@ -348,6 +304,7 @@ Color Color::toHSL() const
     return color;
 }
 
+//------------------------------------------------------------------------------
 void Color::toHSL_InPlace()
 {
     //RGBA -> HSL : Direct Conversion.
@@ -368,7 +325,31 @@ void Color::toHSL_InPlace()
 }
 
 
-//CMY
+//----------------------------------------------------------------------------//
+// CMY Methods                                                                //
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
+Color Color::MakeCMY(float c, float m, float y)
+{
+    Color color;
+    color.setCMY(c, m, y);
+
+    return color;
+}
+
+//------------------------------------------------------------------------------
+void Color::setCMY(float c, float m, float y)
+{
+    m_mode = Color::Mode::CMY;
+
+    cmy.c = c;
+    cmy.m = m;
+    cmy.y = y;
+
+    m_data[3] = 0; //We're not using this on this color mode.
+}
+
+//------------------------------------------------------------------------------
 Color Color::toCMY() const
 {
     //Already on correct color mode...
@@ -381,6 +362,7 @@ Color Color::toCMY() const
     return color;
 }
 
+//------------------------------------------------------------------------------
 void Color::toCMY_InPlace()
 {
     //RGBA -> CMY : Direct Conversion.
@@ -414,7 +396,30 @@ void Color::toCMY_InPlace()
 }
 
 
-//CMYK
+//----------------------------------------------------------------------------//
+// CMYK Methods                                                               //
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
+Color Color::MakeCMYK(float c, float m, float y, float k)
+{
+    Color color;
+    color.setCMYK(c, m, y, k);
+
+    return color;
+}
+
+//------------------------------------------------------------------------------
+void Color::setCMYK(float c, float m, float y, float k)
+{
+    m_mode = Color::Mode::CMYK;
+
+    cmyk.c = c;
+    cmyk.m = m;
+    cmyk.y = y;
+    cmyk.k = k;
+}
+
+//------------------------------------------------------------------------------
 Color Color::toCMYK() const
 {
     //Already on correct color mode...
@@ -427,6 +432,7 @@ Color Color::toCMYK() const
     return color;
 }
 
+//------------------------------------------------------------------------------
 void Color::toCMYK_InPlace()
 {
     //CMY -> CMYK : Direct Conversion.
@@ -447,4 +453,12 @@ void Color::toCMYK_InPlace()
     }
 
     m_mode = Color::Mode::CMY;
+}
+
+//----------------------------------------------------------------------------//
+// Mode Methods                                                               //
+//----------------------------------------------------------------------------//
+Color::Mode Color::getMode() const
+{
+    return m_mode;
 }
