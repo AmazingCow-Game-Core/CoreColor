@@ -3,15 +3,15 @@ project(clion)
 
 set(CMAKE_CXX_STANDARD 11)
 
-include_directories("../../include")
+include_directories("../../")
 
 
 set(SOURCE_FILES
-        ../../include/Color.h
-        ../../include/Convert.h
-        ../../include/CoreColor.h
-        ../../include/CoreColor_Utils.h
-        ../../src/CoreColor.cpp
-        ../../src/Convert.cpp
+        ../../CoreColor/Color.h
+        ../../CoreColor/include/Color.h
+        ../../CoreColor/include/Convert.h
+        ../../CoreColor/include/CoreColor_Utils.h
+        ../../CoreColor/src/Color.cpp
+        ../../CoreColor/src/Convert.cpp
         main.cpp)
 add_executable(clion ${SOURCE_FILES})
